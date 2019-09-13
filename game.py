@@ -19,7 +19,7 @@ BENCH_LIMIT = 10
 NULL_GRID = [[None, None, None, None, None, None, None], [None, None, None, None, None, None, None],
              [None, None, None, None, None, None, None]]
 
-brain = TD3(320)
+brain = TD3()
 
 
 class Player:
@@ -451,7 +451,7 @@ def print_player_stats(player):
 
 
 if __name__ == '__main__':
-    # brain.load('last_save', 'models')
+    brain.load('last_save', 'models')
     while True:
         for x in range(5):
             start = timeit.default_timer()
@@ -525,7 +525,6 @@ if __name__ == '__main__':
                 file.close()
                 print_player_stats(player)
         for x in range(5):
-            brain.train(1000)
+            brain.train(3)
             brain.save('last_save', 'models')
-            brain.load('last_save', 'models')
         clear()

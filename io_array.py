@@ -44,7 +44,7 @@ def get_game_status(player, players):
         if interest > 5: interest = 5.
         all_stats[4*enm+2][7] = interest/5
         all_stats[4*enm+3][7] = ens[enm-1].level/10
-    return all_stats
+    return all_stats.reshape((1,1,32,10))
 
 
 
