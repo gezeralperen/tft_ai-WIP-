@@ -25,7 +25,7 @@ class ReplayGetter(object):
         if len(files) > 20:
             files = random.choices(files, k=20)
         for file in files:
-            print('Getting ' + file)
+            # print('Getting ' + file)
             f = open('replay_experience/' + file, 'r')
             try:
                 all_data.extend(json.load(f))
@@ -34,9 +34,9 @@ class ReplayGetter(object):
                 try:
                     f.close()
                     os.remove('replay_experience/' + file)
-                    print(file + ' is not included to train data and deleted.')
+                    # print(file + ' is not included to train data and deleted.')
                 except PermissionError:
-                    print(file + ' is not included to train data but couldn\'t be deleted.')
+                    # print(file + ' is not included to train data but couldn\'t be deleted.')
                     f.close()
         self.memory = all_data
 
@@ -57,12 +57,48 @@ class ReplayGetter(object):
         return np.array(batch_states), np.array(batch_next_states), np.array(batch_actions), np.array(batch_rewards).reshape(-1,1), np.array(batch_dones).reshape(-1,1), np.array(batch_qs).reshape(-1,1)
 
 
+class StatsEncoder(torch.nn.Module):
+    def __init__(self):
+        super(StatsEncoder, self).__init__()
+        self.conv1 = torch.nn.Conv2d(1, 128, kernel_size=3, stride=1, padding=1)
+        self.conv2 = torch.nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1)
+        self.fc1 = torch.nn.Linear(64 * 32 * 10, 512)
+        self.fc2 = torch.nn.Linear(512, 64)
+        self.fc1t = torch.nn.Linear(64, 64 * 32 * 10)
+        self.conv2t = torch.nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
+        self.conv1t = torch.nn.Conv2d(128, 1, kernel_size=3, stride=1, padding=1)
+
+    def forward(self, x):
+        # Encode
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = x.view(-1, 64 * 32 * 10)
+        x = F.relu(self.fc1(x))
+
+        # Result
+        x = self.fc2(x)
+
+        # Decode
+        x = F.relu(self.fc1t(x))
+        x = x.view(-1,64,32,10)
+        x = F.relu(self.conv2t(x))
+        x = F.relu(self.conv1t(x))
+        return x
+
+    def encode(self,x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = x.view(-1, 64 * 32 * 10)
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
 class Actor(nn.Module):
     def __init__(self, state_dim, action_dim):
         super(Actor, self).__init__()
-        self.cnn1 = nn.Conv2d(in_channels=1, out_channels=128, kernel_size=5, stride=1, padding=2)
+        self.cnn1 = nn.Conv2d(in_channels=1, out_channels=128, kernel_size=3, stride=1, padding=1)
         self.relu1 = nn.ReLU()
-        self.cnn2 = nn.Conv2d(in_channels=128, out_channels=32, kernel_size=5, stride=1, padding=2)
+        self.cnn2 = nn.Conv2d(in_channels=128, out_channels=32, kernel_size=3, stride=1, padding=1)
         self.relu2 = nn.ReLU()
         self.fc1 = nn.Linear(10240, state_dim)
 
@@ -79,7 +115,7 @@ class Actor(nn.Module):
         out = self.fc1(out)
         x = F.relu(self.layer1(out))
         x = F.relu(self.layer2(x))
-        x = torch.tanh(self.layer3(x))
+        x = F.tanh(self.layer3(x))
         return x
 
 class Critic(nn.Module):
@@ -194,11 +230,26 @@ class TD3(object):
 
     def save(self, filename, directory):
         torch.save(self.actor.state_dict(), f'{directory}/{filename}_actor.pth')
-        torch.save(self.actor.state_dict(), f'{directory}/{filename}_critic.pth')
+        torch.save(self.critic.state_dict(), f'{directory}/{filename}_critic.pth')
 
     def load(self, filename, directory):
-        torch.save(self.actor.state_dict(), f'{directory}/{filename}_actor.pth')
-        torch.save(self.actor.state_dict(), f'{directory}/{filename}_critic.pth')
+        self.actor.load_state_dict(torch.load(f'{directory}/{filename}_actor.pth'))
+        self.critic.load_state_dict(torch.load(f'{directory}/{filename}_critic.pth'))
 
 
-
+encoder = StatsEncoder().cuda()
+optimizer = optim.Adam(encoder.parameters())
+for y in range(100):
+    replay.get_last_data()
+    total_loss = 0
+    for x in range(10000):
+        batch_states, _, _, _, _, _ = replay.get_sample(50)
+        state = torch.Tensor(batch_states).to(device)
+        output = encoder(state)
+        loss = F.mse_loss(output, state)
+        total_loss += loss
+        print(f'Iteration : {x+y*10000}/{1000000}\t\tCritic Loss:{total_loss/(x+1):.6f}')
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+    torch.save(encoder.state_dict(), f'models/encoder.pth')

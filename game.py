@@ -10,9 +10,8 @@ from copy import copy
 import json
 import numpy as np
 import os
+
 clear = lambda: os.system('cls')
-
-
 
 PLAYER_COUNT = 8
 INITIAL_HEALTH = 100
@@ -21,6 +20,7 @@ NULL_GRID = [[None, None, None, None, None, None, None], [None, None, None, None
              [None, None, None, None, None, None, None]]
 
 brain = TD3(320)
+
 
 class Player:
     def __init__(self, pid):
@@ -31,7 +31,7 @@ class Player:
         self.champions = []
         self.empty_items = []
         self.grid = [[None, None, None, None, None, None, None], [None, None, None, None, None, None, None],
-             [None, None, None, None, None, None, None]]
+                     [None, None, None, None, None, None, None]]
         self.bench = [None, None, None, None, None, None, None, None, None, None]
         self.alive = True
         self.card = None
@@ -44,7 +44,7 @@ class Player:
     def level(self):
         for cxp in range(8):
             if self.xp < xp_level[cxp]:
-                return cxp+1
+                return cxp + 1
         return 9
 
     @property
@@ -218,7 +218,7 @@ class Player:
 
     def fight_ready(self):
         self.grid_check()
-        if self.on_grid < self.level and self.bench[self.bench is not None] is not None :
+        if self.on_grid < self.level and self.bench[self.bench is not None] is not None:
             self.put_champ(random.choice(self.bench), random.choice(self.get_empty()))
             self.fight_ready()
         for every_champ in self.champions:
@@ -342,6 +342,7 @@ def select_from_card(player, index):
             return False
     return False
 
+
 def take_action(response, player, pool):
     def select_card(id):
         if len(player.card) > id:
@@ -361,7 +362,7 @@ def take_action(response, player, pool):
             champ = player.grid[y][x]
             if a == 2 and b == 9:
                 return player.sell_champ(champ, pool)
-            if player.put_champ(champ, [a,b]):
+            if player.put_champ(champ, [a, b]):
                 return player.sell_champ(champ, pool)
             else:
                 return -4, True
@@ -376,7 +377,7 @@ def take_action(response, player, pool):
                 return select_card(3)
             if y == 2 and x == 8:
                 return select_card(4)
-        if  x == 7:
+        if x == 7:
             if y == 0:
                 # print(f'({player.level}) {player.nick} finished it\'s round.')
                 player.xp += 2
@@ -399,21 +400,16 @@ def take_action(response, player, pool):
                     return -4, True
             if y == -1:
                 champ = player.bench[x]
-                player.put_champ(champ, [a,b])
+                player.put_champ(champ, [a, b])
                 return 0, True
     if y == -1:
         champ = player.bench[y]
         if a == 2 and b == 9:
             return player.sell_champ(champ, pool)
-        check = player.put_champ(champ, [a,b])
+        check = player.put_champ(champ, [a, b])
         if check: return 0, True
         return -4, True
     return -4, True
-
-
-
-
-
 
 
 def play_round(player, pool, players):
@@ -427,15 +423,16 @@ def play_round(player, pool, players):
             played += 1
             # print(f'{player.nick} -- Played {played} times.')
             stats = get_game_status(player, players)
-            # action = brain.select_action(stats)
-            action = np.random.uniform(-1,1,4)
+            action = brain.select_action(stats)
+            # action = np.random.uniform(-1,1,4)
             response = convert_action(action.copy())
             reward, play = take_action(response, player, pool)
             next_stats = get_game_status(player, players)
             response = np.array(response)
-            player.history.append({'State':stats.tolist(),'Next State' : next_stats.tolist(),
-                                   'Action':action.tolist(), 'Reward':reward, 'Done':0, 'Q' : 0})
+            player.history.append({'State': stats.tolist(), 'Next State': next_stats.tolist(),
+                                   'Action': action.tolist(), 'Reward': reward, 'Done': 0, 'Q': 0})
         return reward
+
 
 def print_player_stats(player):
     print(f'''
@@ -454,81 +451,81 @@ def print_player_stats(player):
 
 
 if __name__ == '__main__':
+    # brain.load('last_save', 'models')
     while True:
-        # brain.load('last_save', 'models')
-        for x in range(100):
-        	brain.train(1000)
-        	brain.save('last_save', 'models')
+        for x in range(5):
+            start = timeit.default_timer()
+            pool = [[], [], [], [], []]
+            for champ in champions_data:
+                for cst in range(1, 6):
+                    if champions_data[champ]['cost'] == cst:
+                        for x in range(pool_counts[str(cst)]):
+                            pool[cst - 1].append(Champion(str(champ)))
+                        break
+            players = [Player(x + 1) for x in range(PLAYER_COUNT)]
 
-        start = timeit.default_timer()
-        pool = [[], [], [], [], []]
-        for champ in champions_data:
-            for cst in range(1, 6):
-                if champions_data[champ]['cost'] == cst:
-                    for x in range(pool_counts[str(cst)]):
-                        pool[cst - 1].append(Champion(str(champ)))
-                    break
-        players = [Player(x + 1) for x in range(PLAYER_COUNT)]
+            for player in players:
+                player.gold = 5
+                player.xp = 19
+                new_cards(player, pool)
+                select_from_card(player, 0)
+                send_back_to_pool(player.card, pool)
+                player.gold = 0
+                player.xp = 2
 
-        for player in players:
-            player.gold = 5
-            player.xp = 19
-            new_cards(player, pool)
-            select_from_card(player, 0)
-            send_back_to_pool(player.card, pool)
-            player.gold = 0
-            player.xp = 2
+            game_over = False
+            x = 0
+            while not game_over:
+                x += 1
+                print(f'{x}. Turn')
+                alive_players = [a for a in players if a.alive]
+                random.shuffle(alive_players)
+                for player in alive_players:
+                    interest = player.gold // 10
+                    if interest > 5: interest = 5
+                    player.gold += 5 + interest
+                    player.xp += 2
+                    round_reward = play_round(player, pool, players)
+                    player.fight_ready()
 
-        game_over = False
-        x = 0
-        while not game_over:
-            x += 1
-            print(f'{x}. Turn')
-            alive_players = [a for a in players if a.alive]
-            random.shuffle(alive_players)
-            for player in alive_players:
-                interest = player.gold // 10
-                if interest > 5: interest = 5
-                player.gold += 5 + interest
-                player.xp += 2
-                round_reward = play_round(player, pool, players)
-                player.fight_ready()
+                if len(alive_players) % 2 == 1:
+                    bot = copy(random.choice(alive_players))
+                    bot.nick += '_bot'
+                    initiate_fight(alive_players[len(alive_players) // 2 + 1], bot)
+                    if not alive_players[len(alive_players) // 2 + 1].alive:
+                        alive_players[len(alive_players) // 2 + 1].reward = 5 - len(alive_players)
 
-            if len(alive_players)%2 == 1:
-                bot = copy(random.choice(alive_players))
-                bot.nick += '_bot'
-                initiate_fight(alive_players[len(alive_players)//2 + 1], bot)
-                if not alive_players[len(alive_players)//2 + 1].alive:
-                    alive_players[len(alive_players)//2 + 1].reward = 5-len(alive_players)
+                for pairs in range(int(len(alive_players) // 2)):
+                    initiate_fight(alive_players[pairs], alive_players[-pairs - 1])
+                    if not alive_players[pairs].alive:
+                        alive_players[pairs].reward = 5 - len(alive_players)
+                    if not alive_players[-1 - pairs].alive:
+                        alive_players[-1 - pairs].reward = 5 - len(alive_players)
 
-            for pairs in range(int(len(alive_players)//2)):
-                initiate_fight(alive_players[pairs], alive_players[-pairs - 1])
-                if not alive_players[pairs].alive:
-                    alive_players[pairs].reward = 5-len(alive_players)
-                if not alive_players[-1-pairs].alive:
-                    alive_players[-1-pairs].reward = 5-len(alive_players)
+                if len([a for a in players if a.alive]) < 2:
+                    game_over = True
+            stop = timeit.default_timer()
+            print('Time: ', stop - start)
 
-            if len([a for a in players if a.alive]) < 2:
-                game_over = True
-        stop = timeit.default_timer()
-        print('Time: ', stop - start)
-
-        for player in players:
-            player.history[-1]['Reward'] = player.reward
-            player.history[-1]['Done'] = 1
-            player.history[-1]['Q'] = player.reward
-            for x in range(len(player.history)-1):
-                if player.history[-1-x]['Reward'] != -4:
-                    player.history[-2 - x]['Q'] = player.history[-2 - x]['Reward'] + 0.99 * player.history[-1 - x]['Q']
-                else:
-                    i=0
-                    while player.history[-1-x+i]['Reward'] == -4:
-                        i+=1
-                    player.history[-2-x]['Q'] = player.history[-2 - x]['Reward'] + 0.99 * player.history[-1-x+i]['Q']
-            file = open(f'replay_experience/{time()}.json', 'w')
-            json.dump(player.history, file)
-            file.close()
-            print_player_stats(player)
-
-        brain.save('last_save', 'models')
+            for player in players:
+                player.history[-1]['Reward'] = player.reward
+                player.history[-1]['Done'] = 1
+                player.history[-1]['Q'] = player.reward
+                for x in range(len(player.history) - 1):
+                    if player.history[-1 - x]['Reward'] != -4:
+                        player.history[-2 - x]['Q'] = player.history[-2 - x]['Reward'] + 0.99 * player.history[-1 - x]['Q']
+                    else:
+                        i = 0
+                        while player.history[-1 - x + i]['Reward'] == -4:
+                            i += 1
+                        player.history[-2 - x]['Q'] = player.history[-2 - x]['Reward'] + 0.99 * player.history[-1 - x + i][
+                            'Q']
+                file = open(f'replay_experience/{time()}.json', 'w')
+                json.dump(player.history, file)
+                file.close()
+                print_player_stats(player)
+        for x in range(5):
+            brain.train(1000)
+            brain.save('last_save', 'models')
+            brain.load('last_save', 'models')
         clear()
