@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from PIL import Image
 
 def softmax(x):
     e_x = np.exp(x - np.max(x))
@@ -7,78 +8,50 @@ def softmax(x):
 
 
 def get_game_status(player, players):
-    gold = player.gold / 50
-    xp = player.xp / 100
-    card1 = [0 for x in range(57)]
-    try:
-        card1[player.card[0].id] = 1
-    except:
-        card1[56] = 1
-    card2 = [0 for x in range(57)]
-    try:
-        card2[player.card[1].id] = 1
-    except:
-        card2[56] = 1
+    all_stats = np.zeros((32,10))
+    all_stats[1][7] = player.hp/100
+    all_stats[2][7] = player.gold/50
+    all_stats[3][7] = player.xp/200
+    lenght = len(player.card)
+    if lenght>0:
+        all_stats[1][8] = (5*player.card[0].stats['champ_id'] + 1)/300
+    if lenght>1:
+        all_stats[1][9] = (5*player.card[1].stats['champ_id'] + 1)/300
+    if lenght>2:
+        all_stats[2][8] = (5*player.card[2].stats['champ_id'] + 1)/300
+    if lenght>3:
+        all_stats[2][9] = (5*player.card[3].stats['champ_id'] + 1)/300
+    if lenght>4:
+        all_stats[3][8] = (5*player.card[4].stats['champ_id'] + 1)/300
+    for y in range(3):
+        for x in range(7):
+            if player.grid[y][x] is not None:
+                all_stats[y+1][x] = (5*player.grid[y][x].stats['champ_id']+player.grid[y][x].level)/300
+    for x in range(10):
+        if player.bench[x] is not None:
+            all_stats[0][x] = (5*player.bench[x].stats['champ_id']+player.bench[x].level)/300
+    ens = []
+    for en in players:
+        if en != player:
+            ens.append(en)
+    for enm in range(1,8):
+        for y in range(3):
+            for x in range(7):
+                if ens[enm-1].grid[y][x] is not None:
+                    all_stats[y+(enm*4)+1][x] = (5*ens[enm-1].grid[y][x].stats['champ_id']+ens[enm-1].grid[y][x].level)/300
+        all_stats[4*enm+1][7] = ens[enm-1].hp/100
+        interest = ens[enm-1].gold//10
+        if interest > 5: interest = 5.
+        all_stats[4*enm+2][7] = interest/5
+        all_stats[4*enm+3][7] = ens[enm-1].level/10
+    return all_stats
 
-    card3 = [0 for x in range(57)]
-    try:
-        card3[player.card[2].id] = 1
-    except:
-        card3[56] = 1
 
-    card4 = [0 for x in range(57)]
-    try:
-        card4[player.card[3].id] = 1
-    except:
-        card4[56] = 1
-
-    card5 = [0 for x in range(57)]
-    try:
-        card5[player.card[4].id] = 1
-    except:
-        card5[56] = 1
-
-    player_card_map = card1 + card2 + card3 + card4 + card5
-    player_champ_map = [0 for x in range(60 * 20)]
-    for x in range(20):
-        try:
-            player_champ_map[(x * 60) + player.champions[x].id] = 1
-            player_champ_map[(x * 60) + 57] = player.champions[x].level
-            player_champ_map[(x * 60) + 58] = player.get_champ_location(player.champions[x])[1] / 2
-            player_champ_map[(x * 60) + 59] = player.get_champ_location(player.champions[x])[0] / 6
-        except:
-            player_champ_map[(x * 60) + 56] = 1
-    enemy_map = []
-    for enemy in players:
-        if enemy != player:
-            gold = (enemy.gold // 10) / 5
-            level = enemy.level / 9
-            enemy_champ_map = [0 for x in range(60 * 20)]
-            for x in range(20):
-                try:
-                    player_champ_map[(x * 60) + enemy.champions[x].id] = 1
-                    player_champ_map[(x * 60) + 57] = enemy.champions[x].level
-                    player_champ_map[(x * 60) + 58] = enemy.get_champ_location(enemy.champions[x])[1] / 2
-                    player_champ_map[(x * 60) + 59] = player.get_champ_location(player.champions[x])[0] / 6
-                except:
-                    player_champ_map[(x * 60) + 56] = 1
-            enemy_map += [gold] + [level] + enemy_champ_map
-
-    player_map = [gold] + [xp] + player_card_map + player_champ_map + enemy_map
-    return np.array(player_map)
 
 def convert_action(y_predict):
-    r = random.random()
-    possibilities = softmax(y_predict[0][:28])
-    c=0
-    for a in possibilities:
-        if r < a:
-            selected_action = [c]
-        else:
-            r -= a
-            c += 1
-    if 6<selected_action[0]<27:
-        xind, yind = 2* selected_action[0]+ 14, 2 * selected_action[0] + 15
-        selected_action = np.around([selected_action[0], (y_predict[0][xind])*6, (y_predict[0][yind])*2])
-    return selected_action
+    y_predict[0] = 1.5*y_predict[0] + 0.5
+    y_predict[2] = 1.5*y_predict[2] + 0.5
+    y_predict[1] = 4.5*y_predict[1] + 4.5
+    y_predict[3] = 4.5*y_predict[3] + 4.5
+    return np.round(y_predict)
 

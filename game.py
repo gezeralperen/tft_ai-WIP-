@@ -1,6 +1,6 @@
 from database import champions_data, items_data, pool_counts, level_probabilities, xp_level
 from interactions import set_stats
-from decider import dqn
+from decider import TD3
 import random
 from battle import initiate_fight
 import timeit
@@ -12,13 +12,15 @@ import numpy as np
 import os
 clear = lambda: os.system('cls')
 
+
+
 PLAYER_COUNT = 8
 INITIAL_HEALTH = 100
 BENCH_LIMIT = 10
 NULL_GRID = [[None, None, None, None, None, None, None], [None, None, None, None, None, None, None],
              [None, None, None, None, None, None, None]]
 
-brain = dqn(16)
+brain = TD3(320)
 
 class Player:
     def __init__(self, pid):
@@ -30,7 +32,7 @@ class Player:
         self.empty_items = []
         self.grid = [[None, None, None, None, None, None, None], [None, None, None, None, None, None, None],
              [None, None, None, None, None, None, None]]
-        self.bench = []
+        self.bench = [None, None, None, None, None, None, None, None, None, None]
         self.alive = True
         self.card = None
         self.reward = 4
@@ -64,8 +66,8 @@ class Player:
                 return True
 
             # Will it fit in bench?
-            elif len(self.bench) < BENCH_LIMIT:
-                self.bench.append(gotten_champ)
+            elif self.bench[self.bench is None] is not None:
+                self.bench[self.bench.index(None)] = gotten_champ
                 return True
 
             # Is there space in grid?
@@ -93,8 +95,8 @@ class Player:
             if repeat == 3:
                 self.champions[indices[0]].level_up()
                 will_delete = [self.champions[i] for i in indices[1:]]
-                if will_delete[0] in self.bench: self.bench.remove(will_delete[0])
-                if will_delete[1] in self.bench: self.bench.remove(will_delete[1])
+                if will_delete[0] in self.bench: self.bench[self.bench.index(will_delete[0])] = None
+                if will_delete[1] in self.bench: self.self.bench[self.bench.index(will_delete[1])] = None
                 self.champions.remove(will_delete[0])
                 self.champions.remove(will_delete[1])
                 self.grid_check()
@@ -108,7 +110,7 @@ class Player:
         if grid[2]:
             return [['grid'], grid[0:2]]
         elif searched_champ in self.bench:
-            return [['bench'], [-1, -1]]
+            return [['bench'], [-1, self.bench.index(searched_champ)]]
         else:
             return [['No match!']]
 
@@ -152,29 +154,40 @@ class Player:
     def put_champ(self, champ, cord):
         if self.on_grid < self.level:
             loc = self.get_champ_location(champ)
-            if (cord[0] == -1 or cord[1] == -1):
-                if len(self.bench) < 10 and loc[0] == 'grid':
+            if cord[0] == -1 and loc[0] == 'grid':
+                if self.bench[self.bench is None] is not None:
                     self.grid[loc[1][0]][loc[1][1]] = None
-                    self.bench.append(champ)
+                    self.bench[self.bench.index(None)] = champ
                     return True
                 else:
                     return False
-            elif self.grid[cord[0]][cord[1]] == None:
+            elif cord[1] < 7 and self.grid[cord[0]][cord[1]] == None:
                 if loc == [['No match!']]:
                     if self.on_grid < self.level:
-                        if champ in self.bench: self.bench.remove(champ)
+                        if champ in self.bench: self.bench[self.bench.index(champ)] = None
                         self.grid[cord[0]][cord[1]] = champ
                         return True
                     else:
                         return False
                 if loc[0] == ['bench'] and 3 > cord[0] >= 0 and 7 > cord[0] >= 0:
                     self.grid[cord[0]][cord[1]] = champ
-                    self.bench.remove(champ)
+                    self.bench[self.bench.index(champ)] = None
                     return True
                 elif loc[0] == ['grid'] and 3 > cord[0] >= 0 and 7 > cord[0] >= 0:
                     self.grid[cord[0]][cord[1]] = champ
                     self.grid[loc[1][0]][loc[1][1]] = None
                     return True
+            elif cord[1] < 7:
+                grid_champ = self.grid[cord[0]][cord[1]]
+                if loc[0] == ['bench'] and 3 > cord[0] >= 0 and 7 > cord[0] >= 0:
+                    self.grid[cord[0]][cord[1]] = champ
+                    self.bench[self.bench.index(champ)] = grid_champ
+                    return True
+                elif loc[0] == ['grid'] and 3 > cord[0] >= 0 and 7 > cord[0] >= 0:
+                    self.grid[cord[0]][cord[1]] = champ
+                    self.grid[loc[1][0]][loc[1][1]] = grid_champ
+                    return True
+            return False
         else:
             return False
 
@@ -184,10 +197,17 @@ class Player:
         # champ : Champion
 
     def sell_champ(self, champ, pool):
-        send_back_to_pool([champ], pool)
-        self.empty_items.extend(champ.items)
-        self.gold += champ.stats['cost']
-        self.champions.remove(champ)
+        if champ is not None:
+            send_back_to_pool([champ], pool)
+            self.empty_items.extend(champ.items)
+            self.gold += champ.stats['cost']
+            self.champions.remove(champ)
+            if champ in self.bench:
+                self.bench[self.bench.index(champ)] = None
+            self.grid_check()
+            return 0, True
+        else:
+            return -4, True
 
         # dmg: integer
 
@@ -198,7 +218,7 @@ class Player:
 
     def fight_ready(self):
         self.grid_check()
-        if self.on_grid < self.level and len(self.bench) > 0:
+        if self.on_grid < self.level and self.bench[self.bench is not None] is not None :
             self.put_champ(random.choice(self.bench), random.choice(self.get_empty()))
             self.fight_ready()
         for every_champ in self.champions:
@@ -322,52 +342,78 @@ def select_from_card(player, index):
             return False
     return False
 
-def take_action(response, player):
-    if 5 > response[0] >= 0 :
-        if len(player.card) > response[0]:
-            selected = select_from_card(player, response[0])
+def take_action(response, player, pool):
+    def select_card(id):
+        if len(player.card) > id:
+            selected = select_from_card(player, id)
             if selected:
-                print(f'{player.nick} added {player.champions[-1]} to its hand.')
+                # print(f'{player.nick} added {player.champions[-1]} to its hand.')
                 return 0, True
             else:
                 return -4, True
         else:
             return -4, True
-    if response[0] == 5:
-        if player.gold > 3:
-            print(f'({player.level}) {player.nick} bought Xp.')
-            player.xp += 4
-            player.gold -= 4
-            return 0, True
-        else:
-            return -4, True
-    if response[0] == 6:
-        if player.gold >= 2:
-            new_cards(player, pool)
-            player.gold -= 2
-            print(f'({player.level}) {player.nick} got new cards.')
-            return 0, True
-        else:
-            return -4, True
-    if 6<response[0]<27:
-        champ_id = int(response[0]-7)
-        if champ_id < len(player.champions):
-            cord = [int(response[2]),int(response[1])]
-            try:
-                if player.put_champ(player.champions[champ_id], cord):
-                    print(f'({player.level}) {player.nick} moved {player.champions[champ_id]} to {cord}')
+
+    y, x, a, b = response.round().astype(dtype='int')
+    # print(f'y: {y}\tx: {x}\ta: {a}\tb: {b}')
+    if -1 < y < 3:
+        if x < 7:
+            champ = player.grid[y][x]
+            if a == 2 and b == 9:
+                return player.sell_champ(champ, pool)
+            if player.put_champ(champ, [a,b]):
+                return player.sell_champ(champ, pool)
+            else:
+                return -4, True
+        if x > 7:
+            if y == 0 and x == 8:
+                return select_card(0)
+            if y == 0 and x == 9:
+                return select_card(1)
+            if y == 1 and x == 8:
+                return select_card(2)
+            if y == 1 and x == 9:
+                return select_card(3)
+            if y == 2 and x == 8:
+                return select_card(4)
+        if  x == 7:
+            if y == 0:
+                # print(f'({player.level}) {player.nick} finished it\'s round.')
+                player.xp += 2
+                return 0, False
+            if y == 1:
+                if player.gold >= 2:
+                    new_cards(player, pool)
+                    player.gold -= 2
+                    # print(f'({player.level}) {player.nick} got new cards.')
                     return 0, True
                 else:
                     return -4, True
-            except IndexError:
-                return -4, True
-        else:
-            return -4, True
-    if response[0] == 27:
-        print(f'({player.level}) {player.nick} finished it\'s round.')
-        player.xp += 2
-        return 0, False
+            if y == 2:
+                if player.gold > 3:
+                    # print(f'({player.level}) {player.nick} bought Xp.')
+                    player.xp += 4
+                    player.gold -= 4
+                    return 0, True
+                else:
+                    return -4, True
+            if y == -1:
+                champ = player.bench[x]
+                player.put_champ(champ, [a,b])
+                return 0, True
+    if y == -1:
+        champ = player.bench[y]
+        if a == 2 and b == 9:
+            return player.sell_champ(champ, pool)
+        check = player.put_champ(champ, [a,b])
+        if check: return 0, True
+        return -4, True
     return -4, True
+
+
+
+
+
 
 
 def play_round(player, pool, players):
@@ -376,25 +422,44 @@ def play_round(player, pool, players):
         new_cards(player, pool)
         # print(f'Gold: {player.gold} \t Xp: {player.xp} \t Champions: \n{player.champions}\nCards:')
         play = True
-        while play:
+        played = 0
+        while play and played < 50:
+            played += 1
+            # print(f'{player.nick} -- Played {played} times.')
             stats = get_game_status(player, players)
-            response = convert_action(brain.get_response(stats))
-            if 6 < response[0] < 27:
-                if random.random() < 0.05:
-                    response[1] = random.randint(-1,6)
-                    if response[1] == -1:
-                        response[2] = -1
-                    else:
-                        response[2] = random.randint(0,2)
-            reward, play = take_action(response, player)
+            # action = brain.select_action(stats)
+            action = np.random.uniform(-1,1,4)
+            response = convert_action(action.copy())
+            reward, play = take_action(response, player, pool)
+            next_stats = get_game_status(player, players)
             response = np.array(response)
-            player.history.append({'Status':stats.tolist(), 'Action':response.tolist(), 'Reward':reward, 'Q': 0})
+            player.history.append({'State':stats.tolist(),'Next State' : next_stats.tolist(),
+                                   'Action':action.tolist(), 'Reward':reward, 'Done':0, 'Q' : 0})
         return reward
+
+def print_player_stats(player):
+    print(f'''
+
+                __{player.nick}__
+    Gold : {player.gold}    Level: {player.level}   Xp: {player.xp} Hp: {player.hp} Reward: {player.reward}''')
+    print('==================================================')
+    for row in player.grid:
+        print(row)
+    print('--------------------------------------------------')
+    print(player.bench)
+    print('--------------------------------------------------')
+    print(f'Champion count : {len(player.champions)}\t Bench Count : {len(player.bench)}\t Grid Count :'
+          f' {21 - len(player.get_empty())}')
+    print('==================================================')
 
 
 if __name__ == '__main__':
-    brain.reload()
     while True:
+        # brain.load('last_save', 'models')
+        for x in range(100):
+        	brain.train(1000)
+        	brain.save('last_save', 'models')
+
         start = timeit.default_timer()
         pool = [[], [], [], [], []]
         for champ in champions_data:
@@ -450,30 +515,20 @@ if __name__ == '__main__':
 
         for player in players:
             player.history[-1]['Reward'] = player.reward
+            player.history[-1]['Done'] = 1
             player.history[-1]['Q'] = player.reward
             for x in range(len(player.history)-1):
                 if player.history[-1-x]['Reward'] != -4:
-                    player.history[-2 - x]['Q'] = player.history[-2 - x]['Reward'] + 0.999 * player.history[-1 - x]['Q']
+                    player.history[-2 - x]['Q'] = player.history[-2 - x]['Reward'] + 0.99 * player.history[-1 - x]['Q']
                 else:
                     i=0
                     while player.history[-1-x+i]['Reward'] == -4:
                         i+=1
-                    player.history[-2-x]['Q'] = player.history[-2 - x]['Reward'] + 0.999 * player.history[-1-x+i]['Q']
+                    player.history[-2-x]['Q'] = player.history[-2 - x]['Reward'] + 0.99 * player.history[-1-x+i]['Q']
             file = open(f'replay_experience/{time()}.json', 'w')
             json.dump(player.history, file)
             file.close()
-            print(f'''
-    
-                        __{player.nick}__
-            Gold : {player.gold}    Level: {player.level}   Xp: {player.xp} Hp: {player.hp} Reward: {player.reward}''')
-            print('==================================================')
-            for row in player.grid:
-                print(row)
-            print('--------------------------------------------------')
-            print(player.bench)
-            print('--------------------------------------------------')
-            print(f'Champion count : {len(player.champions)}\t Bench Count : {len(player.bench)}\t Grid Count :'
-                  f' {21 - len(player.get_empty())}')
-            print('==================================================')
-        brain.update_weights(1)
+            print_player_stats(player)
+
+        brain.save('last_save', 'models')
         clear()

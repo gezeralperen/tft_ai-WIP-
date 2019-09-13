@@ -1,1 +1,6 @@
 __pycache__/
+.idea/
+replay_experience/
+models/
+JSON Viewer/
+cmdcp.txt
