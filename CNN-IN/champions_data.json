@@ -1,0 +1,1406 @@
+{
+  "Aatrox": {
+    "armor": 25,
+    "champ_id": 1,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      65,
+      117,
+      234
+    ],
+    "health": [
+      700,
+      1260,
+      2520
+    ],
+    "mana": 75,
+    "mr": 20,
+    "origins": [
+      "Demon",
+      "Blademaster"
+    ],
+    "range": 1,
+    "speed": 153,
+    "starting_mana": 0
+  },
+  "Ahri": {
+    "armor": 20,
+    "champ_id": 2,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      450,
+      810,
+      1620
+    ],
+    "mana": 75,
+    "mr": 20,
+    "origins": [
+      "Wild",
+      "Sorcerer"
+    ],
+    "range": 3,
+    "speed": 181,
+    "starting_mana": 0
+  },
+  "Akali": {
+    "armor": 20,
+    "champ_id": 3,
+    "cost": 4,
+    "crit": 0.25,
+    "damage": [
+      80,
+      144,
+      288
+    ],
+    "health": [
+      650,
+      1170,
+      2340
+    ],
+    "mana": 25,
+    "mr": 20,
+    "origins": [
+      "Ninja",
+      "Assassin"
+    ],
+    "range": 1,
+    "speed": 142,
+    "starting_mana": 0
+  },
+  "Anivia": {
+    "armor": 20,
+    "champ_id": 4,
+    "cost": 5,
+    "crit": 0.25,
+    "damage": [
+      40,
+      72,
+      144
+    ],
+    "health": [
+      700,
+      1260,
+      2520
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Glacial",
+      "Elementalist"
+    ],
+    "range": 3,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Ashe": {
+    "armor": 20,
+    "champ_id": 5,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      65,
+      117,
+      234
+    ],
+    "health": [
+      550,
+      990,
+      1980
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Glacial",
+      "Ranger"
+    ],
+    "range": 4,
+    "speed": 142,
+    "starting_mana": 0
+  },
+  "Aurelion Sol": {
+    "armor": 20,
+    "champ_id": 6,
+    "cost": 4,
+    "crit": 0.25,
+    "damage": [
+      40,
+      72,
+      144
+    ],
+    "health": [
+      650,
+      1170,
+      2340
+    ],
+    "mana": 125,
+    "mr": 20,
+    "origins": [
+      "Dragon",
+      "Sorcerer"
+    ],
+    "range": 3,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Blitzcrank": {
+    "armor": 35,
+    "champ_id": 7,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      600,
+      1080,
+      2160
+    ],
+    "mana": 125,
+    "mr": 20,
+    "origins": [
+      "Robot",
+      "Brawler"
+    ],
+    "range": 1,
+    "speed": 200,
+    "starting_mana": 100
+  },
+  "Brand": {
+    "armor": 25,
+    "champ_id": 8,
+    "cost": 4,
+    "crit": 0.25,
+    "damage": [
+      60,
+      108,
+      216
+    ],
+    "health": [
+      700,
+      1260,
+      2520
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Demon",
+      "Elementalist"
+    ],
+    "range": 3,
+    "speed": 166,
+    "starting_mana": 50
+  },
+  "Braum": {
+    "armor": 75,
+    "champ_id": 9,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      40,
+      72,
+      144
+    ],
+    "health": [
+      650,
+      1170,
+      2340
+    ],
+    "mana": 50,
+    "mr": 20,
+    "origins": [
+      "Glacial",
+      "Guardian"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Camille": {
+    "armor": 25,
+    "champ_id": 10,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      550,
+      990,
+      1980
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Hextech",
+      "Blademaster"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 75
+  },
+  "Chogath": {
+    "armor": 20,
+    "champ_id": 11,
+    "cost": 4,
+    "crit": 0.25,
+    "damage": [
+      70,
+      126,
+      252
+    ],
+    "health": [
+      1000,
+      1800,
+      3600
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Void",
+      "Brawler"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 50
+  },
+  "Darius": {
+    "armor": 40,
+    "champ_id": 12,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      600,
+      1080,
+      2160
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Imperial",
+      "Knight"
+    ],
+    "range": 1,
+    "speed": 200,
+    "starting_mana": 0
+  },
+  "Draven": {
+    "armor": 25,
+    "champ_id": 13,
+    "cost": 4,
+    "crit": 0.25,
+    "damage": [
+      70,
+      126,
+      252
+    ],
+    "health": [
+      650,
+      1170,
+      2340
+    ],
+    "mana": 50,
+    "mr": 20,
+    "origins": [
+      "Imperial",
+      "Blademaster"
+    ],
+    "range": 3,
+    "speed": 133,
+    "starting_mana": 0
+  },
+  "Elise": {
+    "armor": 20,
+    "champ_id": 14,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      45,
+      81,
+      162
+    ],
+    "health": [
+      500,
+      900,
+      1800
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Demon",
+      "Shapeshifter"
+    ],
+    "range": 2,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Evelynn": {
+    "armor": 20,
+    "champ_id": 15,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      70,
+      126,
+      252
+    ],
+    "health": [
+      550,
+      990,
+      1980
+    ],
+    "mana": 75,
+    "mr": 20,
+    "origins": [
+      "Demon",
+      "Assassin"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Fiora": {
+    "armor": 25,
+    "champ_id": 16,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      40,
+      72,
+      144
+    ],
+    "health": [
+      400,
+      720,
+      1440
+    ],
+    "mana": 75,
+    "mr": 20,
+    "origins": [
+      "Noble",
+      "Blademaster"
+    ],
+    "range": 1,
+    "speed": 100,
+    "starting_mana": 0
+  },
+  "Gangplank": {
+    "armor": 20,
+    "champ_id": 17,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      55,
+      99,
+      198
+    ],
+    "health": [
+      700,
+      1260,
+      2520
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Pirate",
+      "Blademaster",
+      "Gunslinger"
+    ],
+    "range": 1,
+    "speed": 153,
+    "starting_mana": 0
+  },
+  "Garen": {
+    "armor": 40,
+    "champ_id": 18,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      600,
+      1080,
+      2160
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Noble",
+      "Knight"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Gnar": {
+    "armor": 30,
+    "champ_id": 19,
+    "cost": 4,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      750,
+      1350,
+      2700
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Wild",
+      "Yordle",
+      "Shapeshifter"
+    ],
+    "range": 2,
+    "speed": 142,
+    "starting_mana": 0
+  },
+  "Graves": {
+    "armor": 20,
+    "champ_id": 20,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      55,
+      99,
+      198
+    ],
+    "health": [
+      450,
+      810,
+      1620
+    ],
+    "mana": 0,
+    "mr": 20,
+    "origins": [
+      "Pirate",
+      "Gunslinger"
+    ],
+    "range": 1,
+    "speed": 181,
+    "starting_mana": 0
+  },
+  "Jayce": {
+    "armor": 35,
+    "champ_id": 21,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      55,
+      99,
+      198
+    ],
+    "health": [
+      600,
+      1080,
+      2160
+    ],
+    "mana": 50,
+    "mr": 20,
+    "origins": [
+      "Hextech",
+      "Shapeshifter"
+    ],
+    "range": 1,
+    "speed": 142,
+    "starting_mana": 0
+  },
+  "Jinx": {
+    "armor": 20,
+    "champ_id": 22,
+    "cost": 4,
+    "crit": 0.25,
+    "damage": [
+      75,
+      135,
+      270
+    ],
+    "health": [
+      550,
+      990,
+      1980
+    ],
+    "mana": 0,
+    "mr": 20,
+    "origins": [
+      "Hextech",
+      "Gunslinger"
+    ],
+    "range": 3,
+    "speed": 153,
+    "starting_mana": 0
+  },
+  "Karthus": {
+    "armor": 25,
+    "champ_id": 23,
+    "cost": 5,
+    "crit": 0.25,
+    "damage": [
+      65,
+      117,
+      234
+    ],
+    "health": [
+      850,
+      1530,
+      3060
+    ],
+    "mana": 125,
+    "mr": 20,
+    "origins": [
+      "Phantom",
+      "Sorcerer"
+    ],
+    "range": 3,
+    "speed": 153,
+    "starting_mana": 40
+  },
+  "Kassadin": {
+    "armor": 25,
+    "champ_id": 24,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      55,
+      99,
+      198
+    ],
+    "health": [
+      550,
+      990,
+      1980
+    ],
+    "mana": 0,
+    "mr": 20,
+    "origins": [
+      "Void",
+      "Sorcerer"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Katarina": {
+    "armor": 20,
+    "champ_id": 25,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      75,
+      135,
+      270
+    ],
+    "health": [
+      450,
+      810,
+      1620
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Imperial",
+      "Assassin"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Kayle": {
+    "armor": 40,
+    "champ_id": 26,
+    "cost": 5,
+    "crit": 0.25,
+    "damage": [
+      60,
+      108,
+      216
+    ],
+    "health": [
+      800,
+      1440,
+      2880
+    ],
+    "mana": 125,
+    "mr": 20,
+    "origins": [
+      "Noble",
+      "Knight"
+    ],
+    "range": 3,
+    "speed": 100,
+    "starting_mana": 50
+  },
+  "Kennen": {
+    "armor": 20,
+    "champ_id": 27,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      65,
+      117,
+      234
+    ],
+    "health": [
+      550,
+      990,
+      1980
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Ninja",
+      "Yordle",
+      "Elementalist"
+    ],
+    "range": 2,
+    "speed": 153,
+    "starting_mana": 50
+  },
+  "Khazix": {
+    "armor": 20,
+    "champ_id": 28,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      55,
+      99,
+      198
+    ],
+    "health": [
+      500,
+      900,
+      1800
+    ],
+    "mana": 50,
+    "mr": 20,
+    "origins": [
+      "Void",
+      "Assassin"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Kindred": {
+    "armor": 20,
+    "champ_id": 29,
+    "cost": 4,
+    "crit": 0.25,
+    "damage": [
+      60,
+      108,
+      216
+    ],
+    "health": [
+      600,
+      1080,
+      2160
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Phantom",
+      "Ranger"
+    ],
+    "range": 3,
+    "speed": 153,
+    "starting_mana": 50
+  },
+  "Leona": {
+    "armor": 100,
+    "champ_id": 30,
+    "cost": 4,
+    "crit": 0.25,
+    "damage": [
+      45,
+      81,
+      162
+    ],
+    "health": [
+      750,
+      1350,
+      2700
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Noble",
+      "Guardian"
+    ],
+    "range": 1,
+    "speed": 181,
+    "starting_mana": 50
+  },
+  "Lissandra": {
+    "armor": 20,
+    "champ_id": 31,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      40,
+      72,
+      144
+    ],
+    "health": [
+      500,
+      900,
+      1800
+    ],
+    "mana": 85,
+    "mr": 20,
+    "origins": [
+      "Glacial",
+      "Elementalist"
+    ],
+    "range": 2,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Lucian": {
+    "armor": 25,
+    "champ_id": 32,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      65,
+      117,
+      234
+    ],
+    "health": [
+      600,
+      1080,
+      2160
+    ],
+    "mana": 35,
+    "mr": 20,
+    "origins": [
+      "Noble",
+      "Gunslinger"
+    ],
+    "range": 3,
+    "speed": 153,
+    "starting_mana": 0
+  },
+  "Lulu": {
+    "armor": 20,
+    "champ_id": 33,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      500,
+      900,
+      1800
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Yordle",
+      "Sorcerer"
+    ],
+    "range": 2,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Miss Fortune": {
+    "armor": 20,
+    "champ_id": 34,
+    "cost": 5,
+    "crit": 0.25,
+    "damage": [
+      75,
+      135,
+      270
+    ],
+    "health": [
+      700,
+      1260,
+      2520
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Pirate",
+      "Gunslinger"
+    ],
+    "range": 3,
+    "speed": 117,
+    "starting_mana": 0
+  },
+  "Mordekaiser": {
+    "armor": 40,
+    "champ_id": 35,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      550,
+      990,
+      1980
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Phantom",
+      "Knight"
+    ],
+    "range": 1,
+    "speed": 200,
+    "starting_mana": 0
+  },
+  "Morgana": {
+    "armor": 30,
+    "champ_id": 36,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      650,
+      1170,
+      2340
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Demon",
+      "Sorcerer"
+    ],
+    "range": 2,
+    "speed": 166,
+    "starting_mana": 50
+  },
+  "Nidalee": {
+    "armor": 20,
+    "champ_id": 37,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      500,
+      900,
+      1800
+    ],
+    "mana": 85,
+    "mr": 20,
+    "origins": [
+      "Wild",
+      "Shapeshifter"
+    ],
+    "range": 3,
+    "speed": 153,
+    "starting_mana": 0
+  },
+  "Pantheon": {
+    "armor": 120,
+    "champ_id": 0,
+    "cost": 5,
+    "crit": 0.25,
+    "damage": [
+      80,
+      144,
+      288
+    ],
+    "health": [
+      1000,
+      1800,
+      3600
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Dragon",
+      "Guardian"
+    ],
+    "range": 1,
+    "speed": 133,
+    "starting_mana": 100
+  },
+  "Poppy": {
+    "armor": 40,
+    "champ_id": 38,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      800,
+      1440,
+      2880
+    ],
+    "mana": 75,
+    "mr": 20,
+    "origins": [
+      "Yordle",
+      "Knight"
+    ],
+    "range": 1,
+    "speed": 200,
+    "starting_mana": 0
+  },
+  "Pyke": {
+    "armor": 25,
+    "champ_id": 39,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      60,
+      108,
+      216
+    ],
+    "health": [
+      600,
+      1080,
+      2160
+    ],
+    "mana": 125,
+    "mr": 20,
+    "origins": [
+      "Pirate",
+      "Assassin"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 75
+  },
+  "RekSai": {
+    "armor": 20,
+    "champ_id": 40,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      650,
+      1170,
+      2340
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Void",
+      "Brawler"
+    ],
+    "range": 1,
+    "speed": 153,
+    "starting_mana": 0
+  },
+  "Rengar": {
+    "armor": 20,
+    "champ_id": 41,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      70,
+      126,
+      252
+    ],
+    "health": [
+      550,
+      990,
+      1980
+    ],
+    "mana": 75,
+    "mr": 20,
+    "origins": [
+      "Wild",
+      "Assassin"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 0
+  },
+  "Sejuani": {
+    "armor": 40,
+    "champ_id": 42,
+    "cost": 4,
+    "crit": 0.25,
+    "damage": [
+      45,
+      81,
+      162
+    ],
+    "health": [
+      850,
+      1530,
+      3060
+    ],
+    "mana": 150,
+    "mr": 25,
+    "origins": [
+      "Glacial",
+      "Knight"
+    ],
+    "range": 1,
+    "speed": 181,
+    "starting_mana": 50
+  },
+  "Shen": {
+    "armor": 30,
+    "champ_id": 43,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      65,
+      117,
+      234
+    ],
+    "health": [
+      700,
+      1260,
+      2520
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Ninja",
+      "Blademaster"
+    ],
+    "range": 1,
+    "speed": 142,
+    "starting_mana": 100
+  },
+  "Shyvana": {
+    "armor": 30,
+    "champ_id": 44,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      650,
+      1170,
+      2340
+    ],
+    "mana": 85,
+    "mr": 20,
+    "origins": [
+      "Dragon",
+      "Shapeshifter"
+    ],
+    "range": 1,
+    "speed": 142,
+    "starting_mana": 0
+  },
+  "Swain": {
+    "armor": 25,
+    "champ_id": 45,
+    "cost": 5,
+    "crit": 0.25,
+    "damage": [
+      65,
+      117,
+      234
+    ],
+    "health": [
+      850,
+      1530,
+      3060
+    ],
+    "mana": 100,
+    "mr": 20,
+    "origins": [
+      "Demon",
+      "Imperial",
+      "Shapeshifter"
+    ],
+    "range": 2,
+    "speed": 153,
+    "starting_mana": 0
+  },
+  "Tristana": {
+    "armor": 20,
+    "champ_id": 46,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      500,
+      900,
+      1800
+    ],
+    "mana": 50,
+    "mr": 20,
+    "origins": [
+      "Yordle",
+      "Gunslinger"
+    ],
+    "range": 4,
+    "speed": 153,
+    "starting_mana": 0
+  },
+  "Twisted Fate": {
+    "armor": 20,
+    "champ_id": 47,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      40,
+      72,
+      144
+    ],
+    "health": [
+      450,
+      810,
+      1620
+    ],
+    "mana": 50,
+    "mr": 20,
+    "origins": [
+      "Pirate",
+      "Sorcerer"
+    ],
+    "range": 3,
+    "speed": 133,
+    "starting_mana": 0
+  },
+  "Varus": {
+    "armor": 25,
+    "champ_id": 48,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      500,
+      900,
+      1800
+    ],
+    "mana": 75,
+    "mr": 20,
+    "origins": [
+      "Demon",
+      "Ranger"
+    ],
+    "range": 4,
+    "speed": 142,
+    "starting_mana": 0
+  },
+  "Vayne": {
+    "armor": 25,
+    "champ_id": 49,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      40,
+      72,
+      144
+    ],
+    "health": [
+      550,
+      990,
+      1980
+    ],
+    "mana": 0,
+    "mr": 20,
+    "origins": [
+      "Noble",
+      "Ranger"
+    ],
+    "range": 3,
+    "speed": 142,
+    "starting_mana": 0
+  },
+  "Veigar": {
+    "armor": 20,
+    "champ_id": 50,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      45,
+      81,
+      162
+    ],
+    "health": [
+      500,
+      900,
+      1800
+    ],
+    "mana": 75,
+    "mr": 20,
+    "origins": [
+      "Yordle",
+      "Sorcerer"
+    ],
+    "range": 3,
+    "speed": 181,
+    "starting_mana": 0
+  },
+  "Vi": {
+    "armor": 25,
+    "champ_id": 51,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      55,
+      99,
+      198
+    ],
+    "health": [
+      600,
+      1080,
+      2160
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Hextech",
+      "Brawler"
+    ],
+    "range": 1,
+    "speed": 153,
+    "starting_mana": 75
+  },
+  "Volibear": {
+    "armor": 30,
+    "champ_id": 52,
+    "cost": 3,
+    "crit": 0.25,
+    "damage": [
+      75,
+      135,
+      270
+    ],
+    "health": [
+      700,
+      1260,
+      2520
+    ],
+    "mana": 75,
+    "mr": 20,
+    "origins": [
+      "Glacial",
+      "Brawler"
+    ],
+    "range": 1,
+    "speed": 181,
+    "starting_mana": 0
+  },
+  "Warwick": {
+    "armor": 30,
+    "champ_id": 53,
+    "cost": 1,
+    "crit": 0.25,
+    "damage": [
+      50,
+      90,
+      180
+    ],
+    "health": [
+      650,
+      1170,
+      2340
+    ],
+    "mana": 150,
+    "mr": 20,
+    "origins": [
+      "Wild",
+      "Brawler"
+    ],
+    "range": 1,
+    "speed": 166,
+    "starting_mana": 50
+  },
+  "Yasuo": {
+    "armor": 35,
+    "champ_id": 54,
+    "cost": 5,
+    "crit": 0.25,
+    "damage": [
+      75,
+      135,
+      270
+    ],
+    "health": [
+      700,
+      1260,
+      2520
+    ],
+    "mana": 25,
+    "mr": 20,
+    "origins": [
+      "Exile",
+      "Blademaster"
+    ],
+    "range": 1,
+    "speed": 100,
+    "starting_mana": 0
+  },
+  "Zed": {
+    "armor": 25,
+    "champ_id": 55,
+    "cost": 2,
+    "crit": 0.25,
+    "damage": [
+      65,
+      117,
+      234
+    ],
+    "health": [
+      550,
+      990,
+      1980
+    ],
+    "mana": 75,
+    "mr": 20,
+    "origins": [
+      "Ninja",
+      "Assassin"
+    ],
+    "range": 1,
+    "speed": 142,
+    "starting_mana": 0
+  }
+}
