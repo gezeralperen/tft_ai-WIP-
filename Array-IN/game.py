@@ -449,7 +449,11 @@ def print_player_stats(player):
 
 
 if __name__ == '__main__':
-    brain.load('last_save', 'models')
+    try:
+        brain.load('last_save', 'models')
+    except:
+        brain.train(10)
+        brain.save('last_save', 'models')
     while True:
         for x in range(10):
             start = timeit.default_timer()
@@ -518,4 +522,6 @@ if __name__ == '__main__':
                 json.dump(player.history, file)
                 file.close()
                 print_player_stats(player)
+        brain.train(10)
+        brain.save('last_save', 'models')
         clear()

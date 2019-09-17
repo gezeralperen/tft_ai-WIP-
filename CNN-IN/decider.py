@@ -22,13 +22,13 @@ class ReplayGetter(object):
         all_data = []
         if len(files) > self.memory_size:
             files = files[self.memory_size:]
-        if len(files) > 5:
-            files = random.choices(files, k=5)
+        if len(files) > 20:
+            files = random.choices(files, k=20)
         for file in files:
             # print('Getting ' + file)
             f = open('replay_experience/' + file, 'r')
             try:
-                all_data.append(json.load(f))
+                all_data.extend(json.load(f))
                 f.close()
             except json.decoder.JSONDecodeError:
                 try:
@@ -63,28 +63,20 @@ class ReplayGetter(object):
                     f.close()
         self.memory = all_data
 
-    def get_sample(self,):
-        batch_states, batch_next_states, batch_actions, batch_rewards, batch_dones, batch_qs = [],[],[],[],[],[]
-        for i in range(5):
-            state = []
-            next_state = []
-            actions = []
-            rewards= []
-            dones = []
-            for j in range(len(self.memory[i])):
-                state.append(np.array(self.memory[i][j]['State']))
-                # state = np.reshape(state, (1, state.shape[0], state.shape[1]))
-                next_state.append(np.array(self.memory[i][j]['Next State']))
-                # next_state.append(np.reshape(next_state, (1, next_state.shape[0], next_state.shape[1])))
-                actions.append(self.memory[i][j]['Action'])
-                rewards.append(self.memory[i][j]['Q'])
-                dones.append(self.memory[i][j]['Done'])
-            batch_actions.append(actions)
-            batch_rewards.append(rewards)
-            batch_dones.append(dones)
-            batch_next_states.append(next_state)
+    def get_sample(self,batch_size):
+        ind = np.random.randint(0, len(self.memory), size=batch_size)
+        batch_states, batch_next_states, batch_actions, batch_rewards, batch_dones = [],[],[],[],[]
+        for i in ind:
+            state = np.array(self.memory[i]['State'])
+            state = np.reshape(state, (1, 32, 10))
             batch_states.append(state)
-        return np.array(batch_states), np.array(batch_next_states), np.array(batch_actions), np.array(batch_rewards).reshape(-1,1).tolist(), np.array(batch_dones).reshape(-1,1).tolist()
+            next_state = np.array(self.memory[i]['Next State'])
+            next_state = np.reshape(next_state, (1, 32, 10))
+            batch_next_states.append(next_state)
+            batch_actions.append(self.memory[i]['Action'])
+            batch_rewards.append(self.memory[i]['Q'])
+            batch_dones.append(self.memory[i]['Done'])
+        return np.array(batch_states), np.array(batch_next_states), np.array(batch_actions), np.array(batch_rewards).reshape(-1,1), np.array(batch_dones).reshape(-1,1)
 
     def get_sample_cnn(self,batch_size):
         ind = np.random.randint(0, len(self.memory), size=batch_size)
@@ -130,7 +122,7 @@ class StatsEncoder(torch.nn.Module):
         x = x.view(-1, 64 * 32 * 10)
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
-        return x.unsqueeze(1)
+        return x
 
 class Actor(nn.Module):
     def __init__(self, state_dim, action_dim):
@@ -196,58 +188,51 @@ class TD3(object):
         action = self.actor(state).data.cpu().numpy().flatten()
         return action
 
-    def train(self, iterations, batch_size = 1, discount=0.99, tau = 0.05, policy_noise=0.2,
+    def train(self, iterations, batch_size = 100, discount=0.99, tau = 0.05, policy_noise=0.2,
               noise_clip=0.5, policy_freq = 2):
+        replay.get_last_data()
         for it in range(iterations):
-            total_loss = 0
-            tactor_loss = 0
-            sa = 0
-            s = 0
-            replay.get_last_data()
-            batch_states, batch_next_states, batch_actions, batch_rewards, batch_dones = replay.get_sample()
-            for game in range(5):
-                game_length = len(batch_dones[game][0])
-                for xx in range(game_length):
-                    i = -1-xx
-                    state = torch.Tensor(batch_states[game][i]).to(device).reshape(1,1,32,10)
-                    state = self.encoder.encode(state).to(device).reshape((-1,64))
-                    next_state = torch.Tensor(batch_next_states[game][i]).to(device).reshape(1,1,32,10)
-                    next_state = self.encoder.encode(next_state).to(device).reshape((-1,64))
-                    action = torch.Tensor(batch_actions[game][i]).to(device).reshape(1,4)
-                    reward = torch.Tensor([batch_rewards[game][0][i]]).to(device)
-                    done = torch.Tensor([batch_dones[game][0][i]]).to(device)
-                    next_action = self.actor_target(next_state).reshape(1,4)
-                    noise = torch.Tensor(batch_actions[game][i]).data.normal_(0, policy_noise).to(device).reshape(1,4)
-                    noise = noise.clamp(-noise_clip, noise_clip)
-                    next_action = next_action + noise
+            total_loss = 0.
+            tactor_loss = 0.
+            sa = 0.
+            s = 0.
+            batch_states, batch_next_states, batch_actions, batch_rewards, _ = replay.get_sample(batch_size)
+            state = torch.Tensor(batch_states).to(device)
+            state = self.encoder.encode(state)
+            next_state = torch.Tensor(batch_next_states).to(device)
+            next_state = self.encoder.encode(next_state)
+            action = torch.Tensor(batch_actions).to(device)
+            next_action = self.actor(next_state)
+            noise = torch.Tensor(batch_actions).data.normal_(0, policy_noise).to(device)
+            noise = noise.clamp(-noise_clip, noise_clip)
+            next_action = next_action + noise
+            reward = torch.Tensor(batch_rewards).to(device)
+            target_q1, target_q2 = self.critic_target(state, next_action)
+            target_q = torch.min(target_q1, target_q2)
+            target_q = reward * (1-tau) + tau * target_q
+            current_q1, current_q2 = self.critic(state, action)
 
-                    target_q1, target_q2 = self.critic_target(state, next_action)
-                    target_q = torch.min(target_q1, target_q2)
-                    target_q = reward + (1 - done) * discount * target_q.float()
+            critic_loss = F.mse_loss(current_q1, target_q) + F.mse_loss(current_q2, target_q)
+            total_loss += critic_loss
+            s+=1.
+            self.critic_optimizer.zero_grad()
+            critic_loss.backward(retain_graph=True)
+            self.critic_optimizer.step()
 
-                    current_q1, current_q2 = self.critic(state, action)
+            if it%policy_freq == 0:
+                actor_loss = -self.critic.Q1(state,self.actor(state)).mean()
+                tactor_loss += actor_loss
+                sa += 1.
+                print(f'Iteration : {it}/{iterations}\tCritic Loss:{total_loss/s:.6f}\tActor Loss:{tactor_loss/sa:.6f}')
+                self.actor_optimizer.zero_grad()
+                actor_loss.backward()
+                self.actor_optimizer.step()
 
-                    critic_loss = F.mse_loss(current_q1, target_q) + F.mse_loss(current_q2, target_q)
-                    total_loss += critic_loss
-                    s+=1
-                    self.critic_optimizer.zero_grad()
-                    critic_loss.backward(retain_graph=True)
-                    self.critic_optimizer.step()
+                for param, target_param in zip(self.actor.parameters(), self.actor_target.parameters()):
+                    target_param.data.copy_(tau*param.data + (1-tau) * target_param.data)
 
-                    if xx%policy_freq == 0:
-                        actor_loss = -self.critic.Q1(state,self.actor(state)).mean()
-                        tactor_loss += actor_loss
-                        sa += 1
-                        print(f'Iteration : {it}/{iterations}\tGame : {game}/{10}\tData : {xx}/{game_length}\tCritic Loss:{total_loss/(s):.6f}\tActor Loss:{tactor_loss/(sa):.6f}')
-                        self.actor_optimizer.zero_grad()
-                        actor_loss.backward()
-                        self.actor_optimizer.step()
-
-                        for param, target_param in zip(self.actor.parameters(), self.actor_target.parameters()):
-                            target_param.data.copy_(tau*param.data + (1-tau) * target_param.data)
-
-                        for param, target_param in zip(self.critic.parameters(), self.critic_target.parameters()):
-                            target_param.data.copy_(tau * param.data + (1 - tau) * target_param.data)
+                for param, target_param in zip(self.critic.parameters(), self.critic_target.parameters()):
+                    target_param.data.copy_(tau * param.data + (1 - tau) * target_param.data)
 
     def save(self, filename, directory):
         torch.save(self.actor.state_dict(), f'{directory}/{filename}_actor.pth')
@@ -270,10 +255,9 @@ def TrainEncoder():
             output = encoder(state)
             loss = F.mse_loss(output, state)
             total_loss += loss
-            print(f'Iteration : {x+y*10000}/{1000000}\t\tCritic Loss:{total_loss/(x+1):.6f}')
+            print(f'Iteration : {x+y*10000}/{1000000}\t\tEncoder Loss:{total_loss/(x+1):.6f}')
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
         torch.save(encoder.state_dict(), f'models/encoder.pth')
 
-TrainEncoder()
